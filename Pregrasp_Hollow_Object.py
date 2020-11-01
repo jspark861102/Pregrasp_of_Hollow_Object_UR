@@ -19,6 +19,7 @@ velocity = 0.05
 wrench = geometry_msgs.msg.WrenchStamped()
 move_result = 0
 d_max = 0.085
+isfault = 0
 
 def wrench_callback(msg):
     global wrench
@@ -217,15 +218,15 @@ if __name__ == '__main__':
         ## object parameters ##
         object_length = 0.068
         object_height = 0.034
-        object_orientation = 0.0*math.pi/6 #rotation by global z axis
+        object_orientation = -1.0*math.pi/7 #rotation by global z axis
         
         ## tilt parameters ## these parameters are tunning parameters!
-        offset_L =  object_length*2/3*0.9
+        offset_L =  object_length*2/3*0.95
         offset_h = -object_height*2/3        
         offset_L_tilt_back = 0.000
         offset_h_tilt_back = 0.030
                 
-        desired_tilt_angle =  math.pi/2 - math.pi/10*1.2 #is is enough due to init grasping tilitng and sliding at point S
+        desired_tilt_angle =  math.pi/2 - math.pi/10*0.5 #is is enough due to init grasping tilitng and sliding at point S
         theta_before_pick  = -math.pi/10
         theta_tilt_back    = -(desired_tilt_angle + theta_before_pick)
         
@@ -237,10 +238,8 @@ if __name__ == '__main__':
         force_of_gripper = 1        
 
         ## environment parameters ##
-        base_height = 0.01 - 0.005 #base_plate = 0.01, spunge = 0.005, rubber = 0.001
+        base_height = 0.01 - 0.001 #base_plate = 0.01, spunge = 0.005, rubber = 0.001
         z_force_limit = 40.0 #N there is issue =====================================================================================
-        max_iter = 1 #1: no iter
-        r_scalling = 0.025 #to relase the force
         #================================================================================================================#
 
         ## getting basic information ##
@@ -261,7 +260,7 @@ if __name__ == '__main__':
         #==============================================## go to tilt position ##=========================================#
         target_pose_to_object = group.get_current_pose().pose   
         ## position lower fingertip to hole of object before grasping, tune with the term of 'object_height/2' ##    
-        target_pose_to_object.position.z = object_height*3/5 - base_height + gripper_rPR_to_d(position_of_girpper_before_pick)/2*math.sin(math.fabs(theta_before_pick))
+        target_pose_to_object.position.z = object_height*7/10 - base_height + gripper_rPR_to_d(position_of_girpper_before_pick)/2*math.sin(math.fabs(theta_before_pick))
 
         target_pose_to_object.position.x = target_pose_to_object.position.x + 0.10
         target_pose_to_object.position.y = target_pose_to_object.position.y + gripper_rPR_to_d(position_of_girpper_before_pick)/2*math.sin(object_orientation)
@@ -297,7 +296,8 @@ if __name__ == '__main__':
         i = 0
         while i < 150: #for gripper, time (150/0.01=1.5sec) is used instead of 'move_result'           
             if wrench.wrench.force.z <= init_force - z_force_limit:
-                print "======================== grasping stop due to z force (current = %f)" % wrench.wrench.force.z     
+                print "======================== grasping stop due to z force (current = %f)" % wrench.wrench.force.z   
+                isfault = 1  
 
                 offset_pose = group.get_current_pose().pose
                 offset_pose.position.z = offset_pose.position.z + 0.1
@@ -328,29 +328,30 @@ if __name__ == '__main__':
         #================================================================================================================#        
         
         #==============================================## tilt w.r.t. pivot ##===========================================#        
-        offset_x =  offset_L * math.cos(object_orientation) #view pivot point from current position
-        offset_y =  offset_L * math.sin(object_orientation) #view pivot point from current position 
-        offset_z =  offset_h #view pivot point from current position       
-        current_theta = math.atan2(-offset_z, -offset_x) #angle of r w.r.t. pivot
-        r = math.sqrt(offset_x*offset_x + offset_y*offset_y + offset_z*offset_z)
-        
-        current_pose = group.get_current_pose().pose
-        pivot_x = current_pose.position.x + offset_x
-        pivot_y = current_pose.position.y + offset_y
-        pivot_z = current_pose.position.z + offset_z
+        if isfault == 0:
+            offset_x =  offset_L * math.cos(object_orientation) #view pivot point from current position
+            offset_y =  offset_L * math.sin(object_orientation) #view pivot point from current position 
+            offset_z =  offset_h #view pivot point from current position       
+            #current_theta = math.atan2(-offset_z, -offset_x) #angle of r w.r.t. pivot
+            current_theta = math.atan2(-offset_h, -offset_L) #angle of r w.r.t. pivot
+            r = math.sqrt(offset_x*offset_x + offset_y*offset_y + offset_z*offset_z)
             
-        target_pose_tilt = copy.deepcopy(current_pose)        
-        current_quat = [0,0,0,0] #just initialisation
-        current_quat[0] = target_pose_tilt.orientation.x
-        current_quat[1] = target_pose_tilt.orientation.y
-        current_quat[2] = target_pose_tilt.orientation.z
-        current_quat[3] = target_pose_tilt.orientation.w        
-        init_rpy = tf.transformations.euler_from_quaternion(current_quat, axes='rxyz')   #-1.57, 0, 1.57  
-        print "============ pose before tilt"
-        print group.get_current_pose().pose     
+            current_pose = group.get_current_pose().pose
+            pivot_x = current_pose.position.x + offset_x
+            pivot_y = current_pose.position.y + offset_y
+            pivot_z = current_pose.position.z + offset_z
+                
+            target_pose_tilt = copy.deepcopy(current_pose)        
+            current_quat = [0,0,0,0] #just initialisation
+            current_quat[0] = target_pose_tilt.orientation.x
+            current_quat[1] = target_pose_tilt.orientation.y
+            current_quat[2] = target_pose_tilt.orientation.z
+            current_quat[3] = target_pose_tilt.orientation.w        
+            init_rpy = tf.transformations.euler_from_quaternion(current_quat, axes='rxyz')   #-1.57, 0, 1.57  
+            print "============ pose before tilt"
+            print group.get_current_pose().pose     
 
-        del_theta = 0.0   
-        for iter in range(max_iter):
+            del_theta = 0.0   
             waypoints = []
             current_pose = group.get_current_pose().pose           
             waypoints.append(copy.deepcopy(current_pose))  
@@ -358,10 +359,10 @@ if __name__ == '__main__':
             count = 0
             n = 100
             while count < n:
-                del_theta = del_theta + (desired_tilt_angle/max_iter) /n
-                target_pose_tilt.position.x = pivot_x  + (r_scalling*iter*1+1)*r * math.cos(current_theta - del_theta) * math.cos(object_orientation) 
-                target_pose_tilt.position.y = pivot_y  + (r_scalling*iter*1+1)*r * math.cos(current_theta - del_theta) * math.sin(object_orientation) 
-                target_pose_tilt.position.z = pivot_z  + (r_scalling*iter*1+1)*r * math.sin(current_theta - del_theta)   
+                del_theta = del_theta + desired_tilt_angle/n
+                target_pose_tilt.position.x = pivot_x  + r * math.cos(current_theta - del_theta) * math.cos(object_orientation) 
+                target_pose_tilt.position.y = pivot_y  + r * math.cos(current_theta - del_theta) * math.sin(object_orientation) 
+                target_pose_tilt.position.z = pivot_z  + r * math.sin(current_theta - del_theta)   
 
                 target_pose_tilt_quat = tf.transformations.quaternion_from_euler(init_rpy[0], init_rpy[1], init_rpy[2] + del_theta, axes='rxyz')            
                 target_pose_tilt.orientation.x = target_pose_tilt_quat[0]
@@ -385,6 +386,7 @@ if __name__ == '__main__':
                 if wrench.wrench.force.z <= init_force  - z_force_limit:
                     group.stop()
                     print "======================== tilt stop due to z force (current = %f)" % wrench.wrench.force.z     
+                    isfault = 1  
 
                     offset_pose = group.get_current_pose().pose
                     offset_pose.position.z = offset_pose.position.z + 0.10
@@ -393,126 +395,132 @@ if __name__ == '__main__':
                     print "============ tilt execution stop with status = %d" % move_result
                     break
             move_result = 0
-            
-        rospy.sleep(1)
-        print "============ pose after tilt"
-        print group.get_current_pose().pose  
+                
+            rospy.sleep(1)
+            print "============ pose after tilt"
+            print group.get_current_pose().pose  
         #================================================================================================================# 
                 
-        #=========================================## tilt back w.r.t. fingertip ##=======================================#        
-        waypoints = []
-        current_pose = group.get_current_pose().pose           
-        waypoints.append(copy.deepcopy(current_pose))   
+        #=========================================## tilt back w.r.t. fingertip ##=======================================#   
+        if isfault == 0:     
+            waypoints = []
+            current_pose = group.get_current_pose().pose           
+            waypoints.append(copy.deepcopy(current_pose))   
 
-        target_pose_tilt = copy.deepcopy(current_pose)        
-        current_quat = [0,0,0,0] #just initialisation
-        current_quat[0] = target_pose_tilt.orientation.x
-        current_quat[1] = target_pose_tilt.orientation.y
-        current_quat[2] = target_pose_tilt.orientation.z
-        current_quat[3] = target_pose_tilt.orientation.w        
-        init_rpy = tf.transformations.euler_from_quaternion(current_quat, axes='rxyz')   #-1.57, 0, 1.57  
-        print "============ pose before tilt back"
-        print group.get_current_pose().pose     
+            target_pose_tilt = copy.deepcopy(current_pose)        
+            current_quat = [0,0,0,0] #just initialisation
+            current_quat[0] = target_pose_tilt.orientation.x
+            current_quat[1] = target_pose_tilt.orientation.y
+            current_quat[2] = target_pose_tilt.orientation.z
+            current_quat[3] = target_pose_tilt.orientation.w        
+            init_rpy = tf.transformations.euler_from_quaternion(current_quat, axes='rxyz')   #-1.57, 0, 1.57  
+            print "============ pose before tilt back"
+            print group.get_current_pose().pose     
 
-        offset_x =  offset_L_tilt_back * math.cos(object_orientation) #view pivot point from current position
-        offset_y =  offset_L_tilt_back * math.sin(object_orientation) #view pivot point from current position 
-        offset_z =  offset_h_tilt_back 
-        
-        current_theta = math.atan2(-offset_z, -offset_x) #angle of r w.r.t. pivot
-        r = math.sqrt(offset_x*offset_x + offset_z*offset_z)
+            offset_x =  offset_L_tilt_back * math.cos(object_orientation) #view pivot point from current position
+            offset_y =  offset_L_tilt_back * math.sin(object_orientation) #view pivot point from current position 
+            offset_z =  offset_h_tilt_back 
+            
+            current_theta = math.atan2(-offset_z, -offset_x) #angle of r w.r.t. pivot
+            r = math.sqrt(offset_x*offset_x + offset_z*offset_z)
 
-        pivot_x = target_pose_tilt.position.x + offset_x
-        pivot_y = target_pose_tilt.position.y + offset_y
-        pivot_z = target_pose_tilt.position.z + offset_z
+            pivot_x = target_pose_tilt.position.x + offset_x
+            pivot_y = target_pose_tilt.position.y + offset_y
+            pivot_z = target_pose_tilt.position.z + offset_z
 
-        count = 0
-        n = 100
-        del_theta = 0.0
-        while count < n:
-            del_theta = del_theta + theta_tilt_back/n
-            target_pose_tilt.position.x = pivot_x + r * math.cos(current_theta - del_theta) * math.cos(object_orientation) 
-            target_pose_tilt.position.y = pivot_y + r * math.cos(current_theta - del_theta) * math.sin(object_orientation)
-            target_pose_tilt.position.z = pivot_z + r * math.sin(current_theta - del_theta)   
+            count = 0
+            n = 100
+            del_theta = 0.0
+            while count < n:
+                del_theta = del_theta + theta_tilt_back/n
+                target_pose_tilt.position.x = pivot_x + r * math.cos(current_theta - del_theta) * math.cos(object_orientation) 
+                target_pose_tilt.position.y = pivot_y + r * math.cos(current_theta - del_theta) * math.sin(object_orientation)
+                target_pose_tilt.position.z = pivot_z + r * math.sin(current_theta - del_theta)   
 
-            target_pose_tilt_quat = tf.transformations.quaternion_from_euler(init_rpy[0], init_rpy[1], init_rpy[2] + del_theta, axes='rxyz')            
-            target_pose_tilt.orientation.x = target_pose_tilt_quat[0]
-            target_pose_tilt.orientation.y = target_pose_tilt_quat[1]
-            target_pose_tilt.orientation.z = target_pose_tilt_quat[2]
-            target_pose_tilt.orientation.w = target_pose_tilt_quat[3]
+                target_pose_tilt_quat = tf.transformations.quaternion_from_euler(init_rpy[0], init_rpy[1], init_rpy[2] + del_theta, axes='rxyz')            
+                target_pose_tilt.orientation.x = target_pose_tilt_quat[0]
+                target_pose_tilt.orientation.y = target_pose_tilt_quat[1]
+                target_pose_tilt.orientation.z = target_pose_tilt_quat[2]
+                target_pose_tilt.orientation.w = target_pose_tilt_quat[3]
 
-            waypoints.append(copy.deepcopy(target_pose_tilt))   
+                waypoints.append(copy.deepcopy(target_pose_tilt))   
 
-            count = count + 1
+                count = count + 1
 
-        del waypoints[:1]            
-        execute_waypoints(waypoints, velocity, False) #================================================================       
+            del waypoints[:1]            
+            execute_waypoints(waypoints, velocity, False) #================================================================       
 
-        gripper_move(pub, position_of_gripper_for_tilt_back, velocity_of_gripper, force_of_gripper) #==================
+            gripper_move(pub, position_of_gripper_for_tilt_back, velocity_of_gripper, force_of_gripper) #==================
 
-        #init_force = wrench.wrench.force.z
-        print "============ z force before tilt back (init = %f)" % wrench.wrench.force.z
-        while True:
-            if move_result == 3:
-                print "============ tilt back finished with status = %d" % move_result
-                break
-            if wrench.wrench.force.z <= init_force  - z_force_limit:
-                group.stop()
-                print "======================== tilt back stop due to z force (current = %f)" % wrench.wrench.force.z     
+            #init_force = wrench.wrench.force.z
+            print "============ z force before tilt back (init = %f)" % wrench.wrench.force.z
+            while True:
+                if move_result == 3:
+                    print "============ tilt back finished with status = %d" % move_result
+                    break
+                if wrench.wrench.force.z <= init_force  - z_force_limit:
+                    group.stop()
+                    print "======================== tilt back stop due to z force (current = %f)" % wrench.wrench.force.z     
+                    isfault = 1  
 
-                offset_pose = group.get_current_pose().pose
-                offset_pose.position.z = offset_pose.position.z + 0.10
-                go_pose(offset_pose, velocity, False) #================================================================
-                rospy.sleep(0.5)
-                print "============ tilt back execution stop with status = %d" % move_result
-                break
-        rospy.sleep(1)
-        move_result = 0
-        print "============ pose after tilt back"
-        print group.get_current_pose().pose  
+                    offset_pose = group.get_current_pose().pose
+                    offset_pose.position.z = offset_pose.position.z + 0.10
+                    go_pose(offset_pose, velocity, False) #================================================================
+                    rospy.sleep(0.5)
+                    print "============ tilt back execution stop with status = %d" % move_result
+                    break
+            rospy.sleep(1)
+            move_result = 0
+            print "============ pose after tilt back"
+            print group.get_current_pose().pose  
         #================================================================================================================# 
 
         #==============================================## down for pick up ##============================================#
-        target_pose_to_down = group.get_current_pose().pose   
-        target_pose_to_down.position.z = target_pose_to_down.position.z - 0.01
-        
-        print "============ go down"
-        go_pose(target_pose_to_down, velocity*0.1, False) #==================================================================        
-        
-        #init_force = wrench.wrench.force.z
-        print "============ z force before down (init = %f)" % wrench.wrench.force.z
-        while True:
-            if move_result == 3:
-                print "============ down finished with status = %d" % move_result
-                break
-            if wrench.wrench.force.z <= init_force  - z_force_limit:
-                group.stop()
-                print "======================== down stop due to z force (current = %f)" % wrench.wrench.force.z     
+        if isfault ==0:
+            target_pose_to_down = group.get_current_pose().pose   
+            target_pose_to_down.position.x = target_pose_to_down.position.x - 0.02
+            target_pose_to_down.position.z = target_pose_to_down.position.z - 0.01
+            
+            print "============ go down"
+            go_pose(target_pose_to_down, velocity*0.1, False) #==================================================================        
+            
+            #init_force = wrench.wrench.force.z
+            print "============ z force before down (init = %f)" % wrench.wrench.force.z
+            while True:
+                if move_result == 3:
+                    print "============ down finished with status = %d" % move_result
+                    break
+                if wrench.wrench.force.z <= init_force  - z_force_limit:
+                    group.stop()
+                    print "======================== down stop due to z force (current = %f)" % wrench.wrench.force.z  
+                    isfault = 1     
 
-                offset_pose = group.get_current_pose().pose
-                offset_pose.position.z = offset_pose.position.z + 0.10
-                go_pose(offset_pose, velocity, False) #================================================================
-                rospy.sleep(0.5)
-                print "============ down execution stop with status = %d" % move_result
-                break
-        rospy.sleep(1)
-        move_result = 0
-        print "============ pose after down"
-        print group.get_current_pose().pose 
+                    offset_pose = group.get_current_pose().pose
+                    offset_pose.position.z = offset_pose.position.z + 0.10
+                    go_pose(offset_pose, velocity, False) #================================================================
+                    rospy.sleep(0.5)
+                    print "============ down execution stop with status = %d" % move_result
+                    break
+            rospy.sleep(1)
+            move_result = 0
+            print "============ pose after down"
+            print group.get_current_pose().pose 
         #================================================================================================================# 
 
         #================================================## pick and up ##===============================================#
-        gripper_move(pub, 250, velocity_of_gripper, force_of_gripper) #===================================================
-        rospy.sleep(1.5)
-        print "============ pick to up"
+        if isfault == 0:
+            gripper_move(pub, 250, velocity_of_gripper, force_of_gripper) #===================================================
+            rospy.sleep(1.5)
+            print "============ pick to up"
 
-        target_pose_to_object = group.get_current_pose().pose 
-        target_pose_to_object.position.z = target_pose_to_object.position.z + 0.1
+            target_pose_to_object = group.get_current_pose().pose 
+            target_pose_to_object.position.z = target_pose_to_object.position.z + 0.1
 
-        print "============ up"
-        go_pose(target_pose_to_object, velocity, True) #==================================================================
-        rospy.sleep(0.5)
-        print "============ up finished with status = %d" % move_result
-        move_result = 0
+            print "============ up"
+            go_pose(target_pose_to_object, velocity, True) #==================================================================
+            rospy.sleep(0.5)
+            print "============ up finished with status = %d" % move_result
+            move_result = 0
         #================================================================================================================# 
 
         #==================================================## realese ##=================================================#
