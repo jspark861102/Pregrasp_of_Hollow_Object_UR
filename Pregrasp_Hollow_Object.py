@@ -15,7 +15,8 @@ from robotiq_2f_gripper_control.msg import _Robotiq2FGripper_robot_output  as ou
 from robotiq_2f_gripper_control.msg import _Robotiq2FGripper_robot_input  as inputMsg
 
 ##### experiment prameters #####
-velocity = 0.05
+velocity = 0.15
+velocity_fast = 0.25
 wrench = geometry_msgs.msg.WrenchStamped()
 move_result = 0
 d_max = 0.085
@@ -172,9 +173,23 @@ def go_to_init_position():
 
 def go_to_pick_position():
     print "============ go_to_pick_position()"
-    group.set_max_velocity_scaling_factor(velocity)
+    group.set_max_velocity_scaling_factor(velocity_fast)
     #init_joint = [n*math.pi/180. for n in [0., -90., 90., 270., -90., -90.]]
     init_joint = [n*math.pi/180. for n in [0., -120., 124., 264., -90., -90.]]
+    group.go(init_joint, wait=True)
+    group.stop()
+
+def go_to_drop_position():
+    print "============ go_to_drop_position()"
+    group.set_max_velocity_scaling_factor(velocity_fast)
+    init_joint = [n*math.pi/180. for n in [176., -93.75, 73.5, 288.3, -4.0, -162.4]]
+    group.go(init_joint, wait=True)
+    group.stop()
+
+def down_to_insert():
+    print "============ go_to_drop_position()"
+    group.set_max_velocity_scaling_factor(velocity)
+    init_joint = [n*math.pi/180. for n in [176., -98., 95., 272., -4., -85.]]
     group.go(init_joint, wait=True)
     group.stop()
     
@@ -218,7 +233,7 @@ if __name__ == '__main__':
         ## object parameters ##
         object_length = 0.068
         object_height = 0.034
-        object_orientation = -1.0*math.pi/7 #rotation by global z axis
+        object_orientation = -0.0*math.pi/7 #rotation by global z axis
         
         ## tilt parameters ## these parameters are tunning parameters!
         offset_L =  object_length*2/3*0.95
@@ -226,7 +241,7 @@ if __name__ == '__main__':
         offset_L_tilt_back = 0.000
         offset_h_tilt_back = 0.030
                 
-        desired_tilt_angle =  math.pi/2 - math.pi/10*0.5 #is is enough due to init grasping tilitng and sliding at point S
+        desired_tilt_angle =  math.pi/2 - math.pi/10*1.0 #is is enough due to init grasping tilitng and sliding at point S
         theta_before_pick  = -math.pi/10
         theta_tilt_back    = -(desired_tilt_angle + theta_before_pick)
         
@@ -240,6 +255,7 @@ if __name__ == '__main__':
         ## environment parameters ##
         base_height = 0.01 - 0.001 #base_plate = 0.01, spunge = 0.005, rubber = 0.001
         z_force_limit = 40.0 #N there is issue =====================================================================================
+        y_torque_limit = 20.0
         #================================================================================================================#
 
         ## getting basic information ##
@@ -249,14 +265,15 @@ if __name__ == '__main__':
         #=============================================## go to pick position ##==========================================#
         init_gripper()
         gripper_move(pub, position_of_girpper_before_pick, 150, 150) #====================================================
-        rospy.sleep(0.5)
+        rospy.sleep(0.1)
         go_to_pick_position() #===========================================================================================
-        rospy.sleep(0.5)
+        rospy.sleep(0.1)
         print "============ go_to_pick_position finished with status = %d" % move_result
         move_result = 0
         #print group.get_current_pose().pose   
         #================================================================================================================#
                 
+        
         #==============================================## go to tilt position ##=========================================#
         target_pose_to_object = group.get_current_pose().pose   
         ## position lower fingertip to hole of object before grasping, tune with the term of 'object_height/2' ##    
@@ -279,12 +296,12 @@ if __name__ == '__main__':
         target_pose_to_object.orientation.w = target_pose_to_object_quat[3]
         
         print "============ go to object"
-        go_pose(target_pose_to_object, velocity, True) #==================================================================
-        rospy.sleep(0.5)
+        go_pose(target_pose_to_object, velocity_fast, True) #==================================================================
+        rospy.sleep(0.1)
         print "============ go to object finished with status = %d" % move_result
         move_result = 0
         #================================================================================================================#
-        
+                
         #==============================================## grasp the object  ##===========================================#       
         init_force = wrench.wrench.force.z
         print "============ z force at initial state (init = %f)" % init_force    
@@ -294,7 +311,7 @@ if __name__ == '__main__':
         print "============ gripper_move()"                
         
         i = 0
-        while i < 150: #for gripper, time (150/0.01=1.5sec) is used instead of 'move_result'           
+        while i < 100: #for gripper, time (150/0.01=1.5sec) is used instead of 'move_result'           
             if wrench.wrench.force.z <= init_force - z_force_limit:
                 print "======================== grasping stop due to z force (current = %f)" % wrench.wrench.force.z   
                 isfault = 1  
@@ -306,25 +323,8 @@ if __name__ == '__main__':
                 break            
             rospy.sleep(0.01)
             i = i + 1
-        rospy.sleep(0.5)
-        #move_result = 0    
-             
-        '''
-        i = 0
-        while i < 20:             
-            if wrench.wrench.force.z <= init_force - 10.0:
-                print "======================== grasping stop due to z force (current = %f)" % wrench.wrench.force.z     
-
-                offset_pose = group.get_current_pose().pose
-                offset_pose.position.z = offset_pose.position.z + 0.005
-                go_pose(offset_pose, 0.3, False) #================================================================
-                #rospy.sleep(2)
-                #break            
-            rospy.sleep(0.1)
-            i = i + 1
-        rospy.sleep(0.5)
-        move_result = 0  
-        '''       
+        rospy.sleep(0.1)
+        #move_result = 0                 
         #================================================================================================================#        
         
         #==============================================## tilt w.r.t. pivot ##===========================================#        
@@ -396,7 +396,7 @@ if __name__ == '__main__':
                     break
             move_result = 0
                 
-            rospy.sleep(1)
+            rospy.sleep(0.1)
             print "============ pose after tilt"
             print group.get_current_pose().pose  
         #================================================================================================================# 
@@ -448,7 +448,7 @@ if __name__ == '__main__':
                 count = count + 1
 
             del waypoints[:1]            
-            execute_waypoints(waypoints, velocity, False) #================================================================       
+            execute_waypoints(waypoints, velocity_fast, False) #================================================================       
 
             gripper_move(pub, position_of_gripper_for_tilt_back, velocity_of_gripper, force_of_gripper) #==================
 
@@ -469,7 +469,7 @@ if __name__ == '__main__':
                     rospy.sleep(0.5)
                     print "============ tilt back execution stop with status = %d" % move_result
                     break
-            rospy.sleep(1)
+            rospy.sleep(0.1)
             move_result = 0
             print "============ pose after tilt back"
             print group.get_current_pose().pose  
@@ -477,12 +477,16 @@ if __name__ == '__main__':
 
         #==============================================## down for pick up ##============================================#
         if isfault ==0:
+            gripper_move(pub, 190, velocity_of_gripper, force_of_gripper) #===================================================
+            rospy.sleep(0.1)
+            print "============ gripper_move() during down"
+
             target_pose_to_down = group.get_current_pose().pose   
-            target_pose_to_down.position.x = target_pose_to_down.position.x - 0.02
-            target_pose_to_down.position.z = target_pose_to_down.position.z - 0.01
+            target_pose_to_down.position.x = target_pose_to_down.position.x - 0.025
+            target_pose_to_down.position.z = target_pose_to_down.position.z - 0.012
             
             print "============ go down"
-            go_pose(target_pose_to_down, velocity*0.1, False) #==================================================================        
+            go_pose(target_pose_to_down, velocity, False) #==================================================================        
             
             #init_force = wrench.wrench.force.z
             print "============ z force before down (init = %f)" % wrench.wrench.force.z
@@ -501,7 +505,7 @@ if __name__ == '__main__':
                     rospy.sleep(0.5)
                     print "============ down execution stop with status = %d" % move_result
                     break
-            rospy.sleep(1)
+            rospy.sleep(0.1)
             move_result = 0
             print "============ pose after down"
             print group.get_current_pose().pose 
@@ -509,25 +513,129 @@ if __name__ == '__main__':
 
         #================================================## pick and up ##===============================================#
         if isfault == 0:
-            gripper_move(pub, 250, velocity_of_gripper, force_of_gripper) #===================================================
-            rospy.sleep(1.5)
-            print "============ pick to up"
+            gripper_move(pub, 250, velocity_of_gripper, 10) #===================================================
+            rospy.sleep(0.5)
+            print "============ gripper_move() for pick"
 
             target_pose_to_object = group.get_current_pose().pose 
             target_pose_to_object.position.z = target_pose_to_object.position.z + 0.1
 
             print "============ up"
-            go_pose(target_pose_to_object, velocity, True) #==================================================================
-            rospy.sleep(0.5)
+            go_pose(target_pose_to_object, velocity_fast, True) #==================================================================
+            rospy.sleep(0.1)
             print "============ up finished with status = %d" % move_result
             move_result = 0
         #================================================================================================================# 
-
+        
+        '''
         #==================================================## realese ##=================================================#
         gripper_move(pub, 0, velocity_of_gripper, force_of_gripper) #=================================
         rospy.sleep(1)
         print "============ realese"
         #================================================================================================================# 
+        '''
+
+        #=============================================## go to drop position ##==========================================#        
+        if isfault ==0:
+            go_to_drop_position() #===========================================================================================
+            rospy.sleep(0.1)
+            print "============ go_to_drop_position finished with status = %d" % move_result
+            move_result = 0
+            #print group.get_current_pose().pose   
+        #================================================================================================================#
+        
+        #=============================================## down to insert ##===============================================#
+        if isfault ==0:
+            init_torque = wrench.wrench.torque.y
+            print "============ y torque at drop state (init = %f)" % init_torque    
+
+            waypoints = []
+            current_pose = group.get_current_pose().pose           
+            waypoints.append(copy.deepcopy(current_pose))   
+
+            print "============ pose before down to insert"
+            print group.get_current_pose().pose   
+
+            target_pose_tilt = copy.deepcopy(current_pose)        
+
+            count = 0
+            n = 100
+            while count < n:
+                target_pose_tilt.position.z = target_pose_tilt.position.z - 0.120/n
+                waypoints.append(copy.deepcopy(target_pose_tilt))  
+                count = count + 1
+
+            del waypoints[:1]            
+            execute_waypoints(waypoints, velocity, False) #================================================================      
+
+            while True:
+                if move_result == 3:
+                    print "============ down to insert finished with status = %d" % move_result
+                    break
+                if wrench.wrench.torque.y >= init_torque  + y_torque_limit:
+                    group.stop()
+                    print "======================== down to insert stop due to y torque (current = %f)" % wrench.wrench.torque.y     
+                    #isfault = 1  
+
+                    offset_pose = group.get_current_pose().pose
+                    offset_pose.position.z = offset_pose.position.z + 0.10
+                    go_pose(offset_pose, velocity, False) #================================================================
+                    rospy.sleep(0.5)
+                    print "============ down to insert execution stop with status = %d" % move_result
+                    break
+            rospy.sleep(0.1)
+            move_result = 0
+            print "============ pose after down to insert"
+            print group.get_current_pose().pose          
+        #================================================================================================================#
+        
+        #=================================================## slide to insert ##==========================================#
+        if isfault ==0:
+            gripper_move(pub, 200, velocity_of_gripper, force_of_gripper) #===================================================
+            rospy.sleep(0.1)
+            print "============ pick to up"
+            
+            waypoints = []
+            current_pose = group.get_current_pose().pose           
+            waypoints.append(copy.deepcopy(current_pose))   
+
+            print "============ pose before slide to insert"
+            print group.get_current_pose().pose   
+
+            target_pose_tilt = copy.deepcopy(current_pose)        
+
+            count = 0
+            n = 100
+            while count < n:
+                target_pose_tilt.position.x = target_pose_tilt.position.x + 0.02/n
+                target_pose_tilt.position.y = target_pose_tilt.position.y + 0.05/n
+                target_pose_tilt.position.z = target_pose_tilt.position.z - 0.01/n
+                waypoints.append(copy.deepcopy(target_pose_tilt))  
+                count = count + 1
+
+            del waypoints[:1]            
+            execute_waypoints(waypoints, velocity, False) #================================================================      
+
+            while True:
+                if move_result == 3:
+                    print "============ slide to insert finished with status = %d" % move_result
+                    break
+                if wrench.wrench.torque.y >= init_torque  + y_torque_limit:
+                    group.stop()
+                    print "======================== slide to insert stop due to y torque (current = %f)" % wrench.wrench.torque.y     
+                    #isfault = 1  
+
+                    offset_pose = group.get_current_pose().pose
+                    offset_pose.position.z = offset_pose.position.z + 0.10
+                    go_pose(offset_pose, velocity, False) #================================================================
+                    rospy.sleep(0.5)
+                    print "============ slide to insert execution stop with status = %d" % move_result
+                    break
+            rospy.sleep(0.1)
+            move_result = 0
+            print "============ pose after slide to insert"
+            print group.get_current_pose().pose    
+        #================================================================================================================#
         
         ##############################################################################################     
 
