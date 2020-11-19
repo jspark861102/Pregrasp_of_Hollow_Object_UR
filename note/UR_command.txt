@@ -1,0 +1,66 @@
+PC IP : 172.20.10.1
+UR IP : 172.20.10.2
+
+1. Gazebo Simulation
+#ur5 gazebo
+roslaunch ur_gazebo ur5.launch paused:=true
+
+#ur5 moveit planning execuation
+	/home/jspark/catkin_ws/src/fmauch_universal_robot/ur5_moveit_config/config 에 삭제 /scaled_pos_joint_traj_controller
+	roslaunch ur5_moveit_config ur5_moveit_planning_execution.launch sim:=true 
+	roslaunch ur5_moveit_config ur5_moveit_planning_execution.launch sim:=true limited:=true
+	
+-for moveit rviz
+	#ur5 moveit rviz
+	roslaunch ur5_moveit_config moveit_rviz.launch config:=true 
+
+-for moveit_commander
+	#moveit_commander
+		python /home/jspark/catkin_ws/src/myscript/test.py
+		python /home/jspark/catkin_ws/src/Pregrasp_Hollow_Object/script/Pregrasp_Hollow_Object.py
+	
+2. Real experiment
+#make calibratin.yaml
+roslaunch ur_calibration calibration_correction.launch \ robot_ip:=172.20.10.2 target_filename:="/home/jspark/ur5_calibration.yaml"
+
+#bringup
+roslaunch ur_robot_driver ur5_bringup.launch robot_ip:=172.20.10.2 \ kinematics_config:=/home/jspark/ur5_calibration.yaml
+//roslaunch ur_robot_driver ur5_bringup.launch limited:=true robot_ip:=172.20.10.2 \ kinematics_config:=/home/jspark/ur5_calibration.yaml
+
+roslaunch ur_robot_driver ur5_bringup.launch robot_ip:=172.20.10.2 \ kinematics_config:=/home/jspark/catkin_ws/src/Pregrasp_Hollow_Object/calibration/ur5_calibration.yaml
+
+
+#run the robot
+rosservice call /ur_hardware_interface/dashboard/play
+
+-for rqt controller
+	#rqt controller
+	rosrun rqt_joint_trajectory_controller rqt_joint_trajectory_controller
+
+-for moveit
+	#ur5 moveit planning execution
+	roslaunch ur5_moveit_config ur5_moveit_planning_execution.launch
+	//roslaunch ur5_moveit_config ur5_moveit_planning_execution.launch limited:=true
+	
+	-for moveit rvize	
+		#ur5 moveit rviz
+		roslaunch ur5_moveit_config moveit_rviz.launch config:=true
+
+	-for moveit_commander
+		#moveit_commander
+		python /home/jspark/catkin_ws/src/Pregrasp_Hollow_Object/script/Pregrasp_Hollow_Object.py
+		
+3. Robotiq gripper
+#usb control
+sudo usermod -a -G dialout jspark
+dmesg | grep tty
+id -Gn <-여기에 dialout이 있어야
+
+#open node
+rosrun robotiq_2f_gripper_control Robotiq2FGripperRtuNode.py /dev/ttyUSB0
+
+#keyboard control
+rosrun robotiq_2f_gripper_control Robotiq2FGripperSimpleController.py
+
+#listen
+rosrun robotiq_2f_gripper_control Robotiq2FGripperStatusListener.py

@@ -1,0 +1,276 @@
+﻿Robotiq Adaptive Gripper URCap
+
+This file describes the changes made to the software.
+
+
+------------------------------------
+Release 1.8.4 - 2020/07/22
+------------------------------------
+Compatible with PolyScope 3.10 and later.
+Compatible with PolyScope 5.4 and later.
+
+Firmware version in upgrader :
+Gripper 2F       : GC3-1.6.9
+Gripper Hand-E   : GD1-1.3.16
+Gripper E-Pick   : GU1-2.0.2
+Gripper Air-Pick : GV1-2.0.2
+
+[BUG FIX] When the tool interface control is granted to the urcap, the output type is forced to standard in order to mitigate the risk of damaging the robot wrist.
+
+------------------------------------
+Release 1.8.3 - 2020/07/09
+------------------------------------
+Compatible with PolyScope 3.10 and later.
+Compatible with PolyScope 5.4 and later.
+
+Firmware version in upgrader :
+Gripper 2F       : GC3-1.6.9
+Gripper Hand-E   : GD1-1.3.16
+Gripper E-Pick   : GU1-2.0.2
+Gripper Air-Pick : GV1-2.0.2
+
+[BUG FIX] Gripper nodes sometimes didn't save properly and was shown as unsaved in the program tree.
+
+------------------------------------
+Release 1.8.1 - 2020/04/27
+------------------------------------
+Compatible with PolyScope 3.10 and later.
+Compatible with PolyScope 5.4 and later.
+
+Firmware version in upgrader :
+Gripper 2F       : GC3-1.6.9
+Gripper Hand-E   : GD1-1.3.16
+Gripper E-Pick   : GU1-2.0.2
+Gripper Air-Pick : GV1-2.0.2
+
+[BUG FIX] Program's execution can hang on Vacuum's Release node without performing the release action
+[BUG FIX] Change ID of a Vacuum device did not function properly when mounted on a Robotiq Wrist Camera
+[BUG FIX] Wait for object detected did not function properly on ESeries when mounted on a Robotiq Wrist Camera
+
+------------------------------------
+Release 1.8.0 - 2020/01/22
+------------------------------------
+Compatible with PolyScope 3.10 and later.
+Compatible with PolyScope 5.4 and later.
+
+Firmware version in upgrader :
+Gripper 2F       : GC3-1.6.9
+Gripper Hand-E   : GD1-1.3.16
+Gripper E-Pick   : GU1-2.0.2
+Gripper Air-Pick : GV1-2.0.2
+
+[BUG FIX] Gripper nodes in different threads interlock themselves
+[IMPROVEMENT] Time delay before vacuum grip and release reduced
+
+------------------------------------
+Release 1.7.2.3 - 2019/11/28
+------------------------------------
+Compatible with PolyScope 3.10 and later.
+Compatible with PolyScope 5.4 and later.
+
+Firmware version in upgrader :
+Gripper 2F       : GC3-1.6.9
+Gripper Hand-E   : GD1-1.3.16
+Gripper E-Pick   : GU1-2.0.2
+Gripper Air-Pick : GV1-2.0.2
+
+[BUG FIX] Grippers connected to wrist are not reset when the program starts
+[BUG FIX] Polyscope no longer freezes when a protective stop happens
+[BUG FIX] Fixed the memory leak when many programs with the gripper and the camera were created
+[CHANGE] The user can grant the wrist connector control the the URCap
+[CHANGE] Missing translations in Spanish, French, German, Korean, Chinese and Japanese have been added 
+
+------------------------------------
+Release 1.7.1.2 - 2019/10/16
+------------------------------------
+Compatible with PolyScope 3.7 and later.
+Compatible with PolyScope 5.1 and later.
+
+Firmware version in upgrader :
+Gripper 2F       : GC3-1.6.9
+Gripper Hand-E   : GD1-1.3.16
+Gripper E-Pick   : GU1-2.0.2
+Gripper Air-Pick : GV1-2.0.2
+
+[BUG FIX] Fixed the speed and force inversion after clicking on "Go to position" button.
+
+------------------------------------
+Release 1.7.0.2 - 2019/10/08
+------------------------------------
+Compatible with PolyScope 3.7 and later.
+Compatible with PolyScope 5.1 and later.
+
+Firmware version in upgrader :
+Gripper 2F       : GC3-1.6.9
+Gripper Hand-E   : GD1-1.3.16
+Gripper E-Pick   : GU1-2.0.2
+Gripper Air-Pick : GV1-2.0.2
+
+[NEW] Up to 4 vacuum grippers can be programmed through the vacuum program node.
+[NEW] Grip check program node supports multiple vacuum grippers.
+[BUG FIX] Improves the adaptive gripper interface responsiveness.
+[BUG FIX] Removes exceptions on Polyscope 5.5
+[CHANGE] Toolbar is enabled when active drive is running.
+[CHANGE] The text of the test buttons in the vacuum program node is more intuitive
+[WARNING] When connecting your gripper at the robot wrist level, you must configure the tool interface. Required since Polyscope 5.4. Limited to e-Series.
+[WARNING] Object status now matches the behaviour the vacuum firmwares GU1-2.0.2 and GV1-2.0.2. This is a breaking change with previous firmwares.
+
+------------------------------------
+Release 1.6.1.2 - 2019/08/01
+------------------------------------
+Compatible with PolyScope 3.7 and later.
+Compatible with PolyScope 5.1 and later.
+
+Firmware version in upgrader
+Gripper 2F		GC3-1.6.2
+Gripper Hand-E		GD1-1.3.6
+Vacuum Gripper E Pick	GU1-1.0.1
+Vacuum Gripper Air Pick	GV1-1.0.1
+
+[FIXED] UndoRedoException on program load
+
+------------------------------------
+Release 1.6.0.4 - 2019/06/18
+------------------------------------
+Compatible with PolyScope 3.7 and later.
+Compatible with PolyScope 5.1 and later.
+
+Firmware version in upgrader
+Gripper 2F		GC3-1.6.2
+Gripper Hand-E		GD1-1.3.6
+Vacuum Gripper E Pick	GU1-1.0.1
+Vacuum Gripper Air Pick	GV1-1.0.1
+
+[NEW] The E Pick and Air Pick vacuum grippers are now supported.
+[NEW] Force and speed of adaptive grippers can be limited by users.
+
+------------------------------------
+Release 1.5.2 - 2019/04/01
+------------------------------------
+Compatible with PolyScope 3.7 and later.
+Compatible with PolyScope 5.1 and later.
+
+Firmware version in upgrader :
+Gripper 2F     : GC3-1.6.2
+Gripper Hand-E : GD1-1.3.6
+
+Increased scan frequency in communication driver when not using Robotiq Camera.
+Updated firmware version of 2F gripper (GC3-1.6.2) for firmware upgrader.
+Translation for Gripper Activate node and Firmware upgrade function for the following languages : Chinese, French, German, Japenese, Korean and Spanish.
+Fixed exception (NullPointerException) after installing URCap.
+
+------------------------------------
+Release 1.5.1 - 2019/01/14
+------------------------------------
+Compatible with PolyScope 3.7 and later.
+Compatible with PolyScope 5.1 and later.
+
+Added firmware upgrader in Installation/About menus for Grippers connected directly to the USB port of the robot controller.
+Added "Show toolbar" option on e-Series robots.
+Added a scan feature in the toolbar's activation button when no Gripper has been scanned.
+Added "Limit gripper current" in Installation menu when Gripper is connected to wrist. The current is limited at 600 mA for a single Gripper and 450 mA for multiple Grippers.
+Fixed rq_is_motion_complete() function.
+Fixed delay when starting a program.
+Fixed activation when Gripper is connected without prior procedure, during a program execution (use Gripper Activate Node).
+Fixed Multiple point exception.
+
+------------------------------------
+Release 1.5.0 - 2018/11/09
+------------------------------------
+Updated communication driver.
+Added actual positions on GUI.
+Added rq_set_gripper_max_cur(current_mA, gripperId) and rq_get_gripper_max_cur(gripperId) in script functions list. These functions are aliases for rq_set_gripper_max_current_mA(current_mA, gripperId) and rq_get_gripper_max_current_mA(gripperId).
+Fixed the loading time after multiple loads.
+Fixed "Add Else" button text in Grip Check.
+Fixed program stop when entering installation tab.
+
+------------------------------------
+Release 1.4.1 - 2018/09/27
+------------------------------------
+Fixed IndexOutOfBoundsException exception when a Grip Check node is suppressed.
+Fixed Grip Check range calculation.
+Fixed position update after jogging.
+Fixed German translation.
+Toolbar controls are disabled on G5 when a program is running.
+Added program node Gripper Activate to activate connected grippers.
+Added "Gripper connected to wrist" option to manage voltage and communication settings on tool connector.
+Added functions to set and get gripper's maximum supply current : rq_set_gripper_max_current_mA(current_mA, gripperId) and rq_get_gripper_max_current_mA(gripperId).
+
+------------------
+Release 1.4.0 - 2018/08/31
+------------------
+Once robot is initialized, the tool voltage is set to 24V and the tool communication is enabled for the Gripper (Baud Rate (115200), Parity (None), Stop Bits (One)).
+Background colors have been changed.
+Translation for the following languages : Chinese, French, German, Japenese, Korean and Spanish.
+Support 2F Grippers connected on e-Series coupling with the short cable plugged in the wrist M8 connector. The 2F Gripper firmware version must be GC3-1.5.2 or more recent. Gripper's firmware can be verified in the installation menu of the Gripper URCap and can be upgraded on a Windows PC. Please contact support if you want to upgrade your 2F Gripper.
+Added functions : rq_move_mm, rq_move_and_wait_mm, rq_move_inches, rq_move_and_wait_inches.
+Enabled Gripper toolbar when ActiveDrive is enabled.
+Fixed display of icons on embedded toolbar.
+
+------------------
+Release 1.3.1 - 2018/08/01
+------------------
+Compatible with Polyscope 5.0. 
+Compatible with Polyscope 3.6 (not compatible with Polyscope 3.5 and previous versions). 
+Added functions rq_gripper_led_on() and rq_gripper_led_off() for gripper's LED control.
+Fix for truncated program node names.
+Bug fix for Grip Check when PolyScope is not in English.
+Bug fix for Grip Check when If node name is invalid.
+
+------------------
+Release 1.3.0 - 2018/07/11
+------------------
+PolyScope 3.6 support.
+Compatible with Polyscope 3.6 (not compatible with Polyscope 3.5 and previous versions). 
+
+------------------
+Release 1.2.1 - 2018/05/24
+------------------
+Bug fix for grip check for inches units.
+
+------------------
+Release 1.2.0 - 2018/05/24
+------------------
+Added Hand-E gripper and generics icons on GUI.
+Added calibration in mm and inches in installation node.
+Added Grip Check program node.
+Added gripper functions in the script's functions list.
+Added rq_current_pos_mm(), rq_current_pos_inches() and rq_print_gripper_serial_number() functions.
+Updated About tab in installation node.
+
+------------------
+Release 1.1.3 - 2017/11/29
+------------------
+Bug fix when installed on Polyscope 3.5, the toolbar was not displayed.
+
+------------------
+Release 1.1.2 - 2017/06/22
+------------------
+Bug fix when trying to run a program with the Gripper URCap installed but no Gripper plugged in.
+Deactivation of the toolbar when a program is running or when no Gripper is plugged in.
+
+------------------
+Release 1.1.1 - 2017/03/28
+------------------
+Bug fix releated to Polyscope 3.4 release.
+
+------------------
+Release 1.1.0 - 2017/03/15
+------------------
+Support of multiple grippers.
+
+------------------
+Release 1.0.2 - 2016/08/31
+------------------
+Bug fix. When the usb connection drops, the gripper keeps its activation and goto statuses.
+
+------------------
+Release 1.0.1 - 2016/07/8
+------------------
+Bug fix. When a large amount of gripper nodes created, Polyscope become slow.
+
+------------------
+Release 1.0.0 - 2016/06/22
+------------------
+Initial release.
+

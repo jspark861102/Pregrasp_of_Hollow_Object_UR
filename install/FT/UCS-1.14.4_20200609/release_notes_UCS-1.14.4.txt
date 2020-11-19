@@ -1,0 +1,375 @@
+Force Copilot URCap
+
+This file describes software changes.
+
+----------------------------
+Release 1.14.4 - 2020/06/09
+----------------------------
+Compatible with PolyScope 3.13.1 and later.
+Compatible with PolyScope 5.8.2 and later.
+
+[BUGFIX] Force value initiating the spiral insertion is now taken into account.
+
+----------------------------
+Release 1.14.3 - 2020/05/26
+----------------------------
+Compatible with PolyScope 3.13 and later.
+Compatible with PolyScope 5.8 and later.
+
+[BUGFIX] Workaround to avoid the Concurrent Modification Exception.
+[BUGFIX] Workaround to make program navigation and execution faster.
+
+----------------------------
+Release 1.14.2 - 2020/04/16
+----------------------------
+Compatible with PolyScope 3.13 and later.
+Compatible with PolyScope 5.8 and later.
+
+[BUGFIX] Improved XML RPC requests.
+[BUGFIX] Minor aesthetic UI fixes in the Path Generator.
+
+----------------------------
+Release 1.14.1 - 2020/02/27
+----------------------------
+Compatible with PolyScope 3.12 and later.
+Compatible with PolyScope 5.7 and later.
+
+[NEW] Added 4-point options to the Path Generator to realize finishing tasks.
+
+[BUGFIX] Force control node not editable after being suppressed.
+
+----------------------------
+Release 1.13.2 - 2020/02/04
+----------------------------
+Compatible with PolyScope 3.12 and later.
+Compatible with PolyScope 5.6 and later.
+
+[IMPROVEMENT] Navigation in the tree view when there are many Path Generator nodes.
+
+----------------------------
+Release 1.13.0 - 2020/01/28
+----------------------------
+Compatible with PolyScope 3.12 and later.
+Compatible with PolyScope 5.6 and later.
+
+[BUGFIX] Memory leak issue when multiple nodes of various types was inserted.
+[BUGFIX] A few issues related to Find Contact Offset/Apply Contact Offset.
+[BUGFIX] Toggle between line to curve in Multipoint Path.
+[BUGFIX] Spiral insertion now works properly in Y-axis.
+[BUGFIX] Test button does not show force in Motion frame anymore.
+[BUGFIX] Limit RTDE error when clicking Test button in various node.
+[BUGFIX] Tool is turned on when Hold to test button is used in Finishing Tool/Stop Tool.
+[BUGFIX] Deceleration is too slow after Hold to test button is released in the Path Generator node.
+[BUGFIX] Rotational insertion caused a protective stop at 45 degrees/s.
+[BUGFIX] Rotational insertion enters in oscillation when the maximum torque is reached.
+[BUGFIX] setpathgeneratorwaypointsxmlrpc request is working again.
+[BUGFIX] Path Generator and Force Control nodes works properly under a UR Conveyor node.
+[BUGFIX] Path Generator ends on the user specified end point.
+[BUGFIX] Path Generator migration data from 1.12.1 to 1.13.0 works as expected.
+[BUGFIX] The Dashboard is now connected with auto reconnection when an application starts to limit RTDE error.
+ 
+----------------------------
+Release 1.12.1 - 2019/11/22
+----------------------------
+Compatible with PolyScope 3.11 and later.
+Compatible with PolyScope 5.5 and later.
+
+[BUGFIX] Performance issue when a line or a curve was added to a Multipoint Path node.
+[BUGFIX] Teach sequence could not be achieved in a Find Contact Offset node if the language used was set to French, German or Spanish.
+
+----------------------------
+Release 1.12.0 - 2019/10/11
+----------------------------
+Compatible with PolyScope 3.11 and later.
+Compatible with PolyScope 5.5 and later.
+
+[NEW] Added Contact Offset nodes: use Touch sequences to Find or Apply an offset to your whole process.
+[NEW] Added 9-point option for the Path Generator.
+[NEW] Added checkbox "Path relative to a feature" for nodes Path, Multipoint Path and Path Generator.
+[NEW] Supporting the Machine Tending Copilot.
+[NEW] Added a Test button in Finishing Tool Control node to test the tool configured output.
+[NEW] Supporting the new Universal Robots UR16 model.
+
+
+[IMPROVEMENTS] Improved performance of large programs containing Copilot nodes.
+[IMPROVEMENTS] Improved performance when loading multiple programs sequentially.
+[IMPROVEMENTS] Improved performance when using multiple Robotiq products.
+[IMPROVEMENTS] Improved stability of the Path Generator node for uncommon path shapes.
+[IMPROVEMENTS] Improved backwards compatibility with Path nodes from earlier Copilot versions.
+[IMPROVEMENTS] Increased the force drop limit to 100N and torque drop limit to 50Nm in the Force Event node.
+
+[REMOVED] "Zero sensor" checkbox, found in Force Control node.
+[REMOVED] Checkbox "Relative" found in Path node.
+
+[BUGFIX] Minor ActiveDrive issues.
+[BUGFIX] Path, Multipoint Path and Path Generator nodes: minor fixes and UI improvements.
+[BUGFIX] Minor Insertion nodes issues.
+[BUGFIX] Incompatibility issue between Copilot and Ethernet/IP on CB-series 3.1.
+[BUGFIX] A protective stop would occur when targeted position was used with a wait-for-force node.
+[BUGFIX] Forces and moments would show in the Installation node even in the absence of a Copilot license.
+[BUGFIX] Robot could move unexpectedly if TCP offset was modified inside a Force Control node.
+[BUGFIX] Users could insert any program nodes under a Path Generator node.
+[BUGFIX] Transition between a Path and Multipoint path in target position was not smooth.
+[BUGFIX] The Force control node Test button would display forces not referenced to the selected reference.
+
+----------------------------
+Release 1.11.0 - 2019/06/06
+----------------------------
+Compatible with UR 3.9+/5.3+
+
+[NEW] Path Generator node: specify a few key positions, and a path is automatically plotted for the robot, for either a flat or curved surface.  Can be used with the Finishing Tool Control.
+[NEW] Insertion node: the Test button helps ensure insertion operations (Spiral, Rotational, Linear) have been run according to settings.
+[NEW] Finishing Tool Control node: tools can now be turned on and off using this node.
+[NEW] Two Copilot license types: Finishing Copilot and Force Copilot.  The Finishing Copilot licence gives access to advanced Force Copilot nodes, such as the Finishing Tool Control and the Path Generator.
+[NEW] Force Control node: Added an icon which pops up a reference screen about using Targeted position and Current position.
+[NEW] Force Control node: force and moment are now displayed when holding the Test button.
+
+[IMPROVEMENT] Tweaked performance when using multiple Robotiq URCaps.
+[IMPROVEMENT] ActiveDrive: can now activate by pushing Freedrive twice.
+
+[BUG FIX] Multipoint Path node: Add line and Add curve instructions no longer crash ActiveDrive.
+[BUG FIX] Copilot is now fully compatible with the Real-Time Data Exchange (RTDE) client for e-Series robots.
+[BUG FIX] Path node: BeforeStart is executed just before the robot starts moving along its path.
+[BUG FIX] Trying to access ActiveDrive while a program is running displays a warning message.
+[BUG FIX] When a Reorient operation is run in ActiveDrive, if an existing force is applied to the robot, a message is displayed to prompt you to zero forces.
+[BUG FIX] Path node: repeatedly tapping the Play and Stop buttons for a program displays a message.
+[BUG FIX] Current URCap version is now backward compatible with previous versions for Insertion Spiral and Rotational operations, and can run programs designed in earlier URCap versions that include these operations.
+[BUG FIX] ActiveDrive: if you enabled ActiveDrive, zeroed forces, and then switched from Free mode to Translation mode (for instance), the robot used to move based on Free mode.
+[BUG FIX] Path and Multipoint Path nodes: multithreading now synchronizes properly and no longer crashes programs.
+[BUG FIX] When the Tool Center Point (TCP) was changed after recording a path, the Start and End buttons used the original TCP, while the Play button used the modified TCP.
+[BUG FIX] When modifying a TCP orientation, the ActiveDrive Reorient feature made the robot move and turn randomly. 
+
+----------------------------
+Release 1.10.0 - 2019/04/23
+----------------------------
+Compatible with UR 3.9+/5.3+
+
+ActiveDrive
+- Enable Reorient button when ActiveDrive is not running.
+- Reorient button aligns the tool frame with the base frame.
+- Prevent robot errors near joint position limits.
+- Improve transitions between free mode and contact mode.
+- ActiveDrive is always set to 100% speed.
+
+Force Control
+- Can now apply force based on Targeted position or Current position (two radio buttons).
+- New Motion frame feature.
+
+Bug Fixes
+- Matched the Max distance with value set by user in Find Surface.
+- Running an entire Path or Multipoint Path with the Play button from the Command tab crashed the XML-RPC server daemon.
+- Play button was greyed out when recording a null length path.
+- ActiveDrive did not start on the first try after a Protective Stop.
+- Find Surface did not work with dual grippers due to incorrect sensor zeroing.
+- Instability occurred when force control deviation reached 180 degrees in Rz.
+- The Copy/Paste Insertion Node would lose its target position.
+- Robot deviated from desired frame while moving with rotation axes blocked in ActiveDrive.
+
+----------------------------
+Release 1.9.2 - 2019/03/13
+----------------------------
+Compatible with UR 3.8+/5.2+
+
+bug fix:
+- Insertion nodes(spiral and rotational) loses positions when loading program older than 1.9.0 
+- Insertion nodes(spiral and rotational) loses positions when copy/pasted with program older than 1.9.0 
+
+----------------------------
+Release 1.9.1 - 2019/03/07
+----------------------------
+Compatible with UR 3.8+/5.2+
+
+bug fix:
+- Invalid script argument in FindSurface when robot set in a language where decimal number use a comma instead of a dot.
+
+----------------------------
+Release 1.9.0 - 2019/02/26
+----------------------------
+Compatible with UR 3.8+/5.2+
+
+Find Surface:
+- Can be used in a continious check if
+- Add feature base option
+
+Insertion:
+- linear search added feature base option
+
+Collision Detection
+- Option in installation to automatically start collision detection monitoring when robot program starts
+- Option in installation is used as a BeforeStart node.
+- Collision detection node to start and stop monitoring
+
+Force Event
+- Force reached node wait until force control setting is reached
+- Click detection node 
+
+bug fixes:
+- A Multipoint Path consisting in pure rotation about Wrist3 causes unwanted oscillations when a TCP offset contains non-zero X and Y elements
+- Supressing Multipoint path waypoints breaks waypoint increment
+- A non-set waypoint is added to a multipoint path when this path is placed in a suppressed folder after being unsuppressed.
+- The multipoint path node would stay stuck at the Adding waypoint... step after trying to press the Add line button.
+- Editing a waypoint by using the Edit waypoint button in a multipoint path node actually affected some other waypoints in another multipoint path found in the same program.
+- Rotational peck mode option rotate always in the same orientation.
+- OnError condition not executed on Rotational node.
+- Path node can have zero speed factor
+- Find Surface minimum speed isn't take as valid parameter.
+- After having a bug where a waypoint would get reedited from the changes made to another waypoint in another multipoint path, it becomes impossible to redit the waypoint to a new pose. The same pose is kept. Only solution is to delete it and restart.
+- Wrong feature save in a program with a Force Control Node and other node with drop down list.
+- In Force Control node, stiffness of position controlled axis can not be modified if option adaptive stiffness is not choosed. 
+
+----------------------------
+Release 1.8.1 - 2019/01/08
+----------------------------
+
+Bug fix for Zero Sensor popup displaying twice when starting ActiveDrive while sensor is not still.
+
+----------------------------
+Release 1.8.0 - 2018/12/12
+----------------------------
+
+ActiveDrive 2.0:
+- ActiveDrive toolbar is embedded for e-Series
+- separation of contact and non contact modes
+- All improvements are applied to CB-Series and e-Series robots
+- No singularity restrictions
+- Contact mode is sufficiently stable for insertions
+- Non-contact mode is more responsive
+
+Rotation Search:
+- Add possibility to chose rotational direction
+
+Multipoint Path:
+- Add possibility to rename waypoint
+
+bug fixes:
+- Abrupt motion or Node Executor Error no longer occurs on program loop for a robot program with a combination of UR nodes and Force Copilot nodes, both of which move the robot
+- Multipoint Path up and down arrows button doesn't break the treenode when adding or deleting after using those buttons.
+- Multipoint Path tool speed textfield insert default value if user clicks away and keypad disappear.
+- All joint limits, including infinite limits for UR3 Wrist3, are correctly imposed
+- Suppressing a ForceControl node with an RQMoves node does not break the Polyscope tree
+- ActiveDrive stops after 30 seconds of inactivity
+- Excessive force is detectected correctly when starting ActiveDrive
+
+----------------------------
+Release 1.7.1 - 2018/11/01
+----------------------------
+
+bug fixes:
+-Multipoint Path waypoints node numbers are managed with UndoRedo UR function and Delete UR functions.
+-Adding Multipoint Path waypoint is 10 times faster than before.
+-Multipoint Path waypoint type radio buttons are updated when waypoint is deleted.
+-Possibility of adding a waypoint even when the adding button is disabled is corrected.
+-Reduce invalid instances of Node executor error and protective stops, particularly when pausing and playing a path with large orientation changes.
+-Unexpected orientation changes in Multipoint Path should no longer occur.
+-Unexpected behavior for Multipoint Path with repeated points should no longer occur.
+-ActiveDrive stops automatically due after several seconds when displaying camera tab.
+-Fix Sensor and Skills "double defined" errors and warn user to use the new URCap instead of Skills
+-Japanese translation reviewed.
+
+----------------------------
+Release 1.7.0 - 2018/10/12
+----------------------------
+
+URCap is now compatible with e-Series Universal Robots (activation via USB license dongle)
+Zero Sensor node has a checkbox option to wait for the sensor to be steady
+Zero Sensor node uses a filtered zero value (CB-Series robots)
+Insertion node adds a removable Zero Sensor node as first child
+Find Surface node has a checkbox to optionnaly add a Zero Sensor instruction
+Multipoint Path node increments its waypoint numbers
+Path node does not display the path time value anymore, and is more reactive
+
+bug fixes: 
+-ActiveDrive square malfunction is resolved
+-Correction of Multipoint Path node display errors
+-Incompatibility with languages using comma as decimal delimiter
+
+know bug:
+-Zero sensor popup appear twice when starting ActiveDrive and sensor is not still.
+
+----------------------------
+Release 1.6.1 - 2018/09/02
+----------------------------
+
+bug fixes: 
+-ActiveDrive toolbar visible for all languages.
+
+----------------------------
+Release 1.6.0 - 2018/08/31
+----------------------------
+Robotiq Move node added, along with Waypoint node
+Translations added in german, french, spanish, japanese, chinese and korean.
+Check box into Installation tab to hide and show ActiveDrive toolbar.
+
+bug fixes: 
+-Path speed slider fo each node(not the same anymore).
+-Path speed indicator is visible
+
+----------------------------
+Release 1.5.0 - 2018/08/07
+----------------------------
+Added Insertion node.
+Added Find Surface node.
+
+TBD:
+bug fixes:
+- movejId not registered
+- recorded path with no robot motion will not cause server to crash
+
+----------------------------
+Release 1.4.0 - 2018/07/11
+----------------------------
+Compatible with Polyscope 3.6 (not compatible with Polyscope 3.5 and previous versions).
+
+----------------------------
+Release 1.3.0 - 2018/06/15
+----------------------------
+Added the FT Mode node
+Added functions to the expression builder: get_applied_tcp_force(<index>), get_applied_base_force(<index>), express_force_in_frame(<T_from_to>, <wrench>)
+Bugfix: Improvement in the Active Drive reorienting
+Bugfix: Sealed off the resource leakage causing PolyScope to slow down
+Bugfix: Sensor firmware upgrader now upgrades to version 1.6.3
+
+----------------------------
+Release 1.2.1 - 2017/12/11
+----------------------------
+Added the Zero FT Sensor node
+Bugfix for orientation interpolation during path
+Path termination modified to prevent protective stop
+Improvement of the path accuracy at high speed
+Bugfix in the restart of the XMLRPC server after reboot
+Bugfix for the ActiveDrive toolbar occasionally not displaying upon restart of PolyScope
+
+----------------------------
+Release 1.2.0 - 2017/11/12
+----------------------------
+Deletion of the program template allowing to read the force values (now hidden)
+Sensor's force values fed to the robot
+New path constantification algorithm
+Calibration tool now in the Installation tab (deletion of the robot program)
+Access to Sensor's status, force and moment values via the Dashboard tab
+Firmware upgrade option in the Dashboard tab, if applicable
+Reliable display of the ActiveDrive toolbar (displays upon robot initialization if failed to display at the startup)
+
+----------------------------
+Release 1.1.1 - 2017/03/16
+----------------------------
+Return of Polyscope Speed slider warnings if under 50%
+
+----------------------------
+Release 1.1.0 - 2017/03/13
+----------------------------
+This release has been tested on those controllers: CB3.1 (polyscope version 3.3.4.310 and 3.4.0.39)
+Polyscope Speed slider controls the ActiveDrive maximal speed
+Maximal tcp speed increase from 0.4 to 0.5 m/s and from 2.0rad/s to 2.5rad/s
+Small adjustement of speed gain to increase reactiveness
+Compatibility with SW3.4
+
+----------------------------
+Release 1.0.1 - 2016/09/16
+----------------------------
+The template_sensor.urp program uses the read data method which prevent a lag to build in the sensor data when a program is paused.
+
+----------------------------
+Release 1.0.0 - 2016/06/22
+----------------------------
+First release . This release has been tested on those controllers: CB3.1 (polyscope version 3.3.0.145).
