@@ -21,14 +21,11 @@ roslaunch ur_gazebo ur5.launch paused:=true
 	
 2. Real experiment
 #make calibratin.yaml
-roslaunch ur_calibration calibration_correction.launch \ robot_ip:=172.20.10.2 target_filename:="/home/jspark/ur5_calibration.yaml"
+roslaunch ur_calibration calibration_correction.launch \ robot_ip:=172.20.10.2 target_filename:="/home/jspark/catkin_ws/src/Pregrasp_Hollow_Object/calibration/ur5_calibration.yaml"
 
 #bringup
-roslaunch ur_robot_driver ur5_bringup.launch robot_ip:=172.20.10.2 \ kinematics_config:=/home/jspark/ur5_calibration.yaml
-//roslaunch ur_robot_driver ur5_bringup.launch limited:=true robot_ip:=172.20.10.2 \ kinematics_config:=/home/jspark/ur5_calibration.yaml
-
 roslaunch ur_robot_driver ur5_bringup.launch robot_ip:=172.20.10.2 \ kinematics_config:=/home/jspark/catkin_ws/src/Pregrasp_Hollow_Object/calibration/ur5_calibration.yaml
-
+//roslaunch ur_robot_driver ur5_bringup.launch limited:=true robot_ip:=172.20.10.2 \ kinematics_config:=/home/jspark/catkin_ws/src/Pregrasp_Hollow_Object/calibration/ur5_calibration.yaml
 
 #run the robot
 rosservice call /ur_hardware_interface/dashboard/play
