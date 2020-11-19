@@ -9,7 +9,6 @@ import control_msgs.msg
 import std_msgs.msg
 import visualization_msgs.msg 
 import math
-import numpy
 import tf
 import copy
 import roslib; roslib.load_manifest('robotiq_2f_gripper_control')
@@ -233,17 +232,6 @@ def ori2eul(ori):
 
 ##############################################################################################
 ######################################### motion API #########################################
-#group.set_joint_value_target(target_joint)
-#group.set_pose_target(target_pose)
-#group.go(wait=True)
-
-#group.go(target_joint, wait=True)
-#group.go(target_pose, wait=True)
-
-#waypoints with pose
-#plan3, fraction = group.compute_cartesian_path
-#replan = group.retime_trajectory(robot.get_current_state(), plan3, vel)
-#group.execute(replan, wait=True)
 ##############################################################################################
 def go_joints_degree(joint_deg, vel, iswait):
     group.set_max_velocity_scaling_factor(vel)
@@ -320,18 +308,8 @@ def go_to_align_position():
 ## tf of the tool0 and tool0_controler is the same
 ## tool0_controller, obtained from hardware, interface is more precise but, not included in group
 ## 
-## moveit API ##
-## group.get_current_pose()
-## tf.transformations.euler_from_quaternion(moveit_rot)
-##
-## home position
-## joint = [n*math.pi/180. for n in [0., -90., 90., 180., -90., 0.]]
-## pose = [0.4744 (0.684), 0.1106, 0.6099], [0.00299, -0.000286, 0.00127, 0.9999]
-##
-## pick position
-## init_joint = [n*math.pi/180. for n in [0., -90., 90., 270., -90., -90.]]
-## init_joint = [n*math.pi/180. for n in [0., -120., 124., 264., -90., -90.]]
-
+## move_result ##
+## PENDING=0, ACTIVE=1, PREEMPTED=2, SUCCEEDED=3, ABORTED=4, REJECTED=5, PREEMPTING=6, RECALLING=7, RECALLED=8, LOST=9
 ##############################################################################################    
 if __name__ == '__main__': 
     try:    
@@ -384,8 +362,7 @@ if __name__ == '__main__':
                         break
 
                     wait_count = wait_count + 1            
-                    rospy.sleep(
-1)
+                    rospy.sleep(1)
 
                 go_to_pick2_position() #===========================================================================================
                 rospy.sleep(0.1)
