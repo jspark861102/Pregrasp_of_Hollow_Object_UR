@@ -3,7 +3,7 @@
  2. UR에 hostname과 port를 jspark/50002로 잘 설정해야 함
  3. 프로그램 로드가 아니라 러닝을 했어야 함
 
-2. moveit_commander 관련 : 홍콩과기대도 이걸로 했음. 꼭 해결해야 함
+2. moveit_commander 관련 
  1 .ROS는 python2.7로 구동이 되므로 모든 라이브러리도 2.7버전으로 되어야 함. 특히 pip로 설치시 python2.7로 해야 함
  2 .PyAssimp import 문제
     https://github.com/assimp/assimp 에서 새로운 pyAssimp를 다운 받고,    
